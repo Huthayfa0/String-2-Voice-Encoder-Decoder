@@ -1,7 +1,8 @@
 from playsound import playsound
-from scipy.io.wavfile import write
+from scipy.io.wavfile import read
 import numpy as np
 from part1 import encode
+encode("Hello World")
+fs,data=read("output.wav")
+data=data.astype(np.float32)
 
-string = input("Please enter the string you want to encode: ")
-encode(string)
