@@ -2,18 +2,6 @@ from ctypes import *
 from playsound import playsound
 from scipy.io.wavfile import write
 import numpy as np
-
-ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
-
-
-def py_error_handler(filename, line, function, err, fmt):
-    pass
-
-
-c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
-asound = cdll.LoadLibrary('libasound.so')
-asound.snd_lib_error_set_handler(c_error_handler)
-
 fs = 8000
 duration = 0.040
 n = np.arange(fs * duration)
