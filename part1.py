@@ -3,13 +3,12 @@ from scipy.io.wavfile import write
 import numpy as np
 
 
-def encode(string, output_file="output.wav", fs=8000, duration=0.040):
+def encode(string, output_file="output.wav", fs=8000, duration=0.040, encode_frequencies=None):
+    if encode_frequencies is None:
+        encode_frequencies = [[100, 200], [400, 600, 1000], [800, 1200, 2000], [1600, 2400, 4000]]
     n = np.arange(fs * duration)
 
-    waves = [[(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [100, 200]],
-                 [(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [400, 600, 1000]],
-                 [(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [800, 1200, 2000]],
-                 [(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [1600, 2400, 4000]]]
+    waves = [[(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in frequencies] for frequencies in encode_frequencies]
     samples = np.empty(shape=[0], dtype=np.float32)
     for c in string:
         if c == ' ':
