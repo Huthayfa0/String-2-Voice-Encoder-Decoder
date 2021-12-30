@@ -1,0 +1,30 @@
+from playsound import playsound
+from scipy.io.wavfile import write
+import numpy as np
+
+
+def encode(string, output_file="output.wav", fs=8000, duration=0.040):
+    n = np.arange(fs * duration)
+
+    waves = [[(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [100, 200]],
+                 [(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [400, 600, 1000]],
+                 [(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [800, 1200, 2000]],
+                 [(np.cos(2 * np.pi * n * x / fs)).astype(np.float32) for x in [1600, 2400, 4000]]]
+    samples = np.empty(shape=[0], dtype=np.float32)
+    for c in string:
+        if c == ' ':
+            wave = waves[0][0] + waves[1][-1] + waves[2][-1] + waves[3][-1]
+        else:
+            wave = waves[0][0 if (c.islower()) else 1]
+            x = ord(c.lower()) - ord('a')
+            wave += waves[3][x % 3]
+            x //= 3
+            wave += waves[2][x % 3]
+            x //= 3
+            wave += waves[1][x % 3]
+        samples = np.concatenate((samples, wave), axis=0)
+    samples = samples.astype(np.float32)
+    amp = np.iinfo(np.int16).max
+    data = amp * samples
+    write(output_file, fs, data.astype(np.int16))
+    playsound(output_file)
