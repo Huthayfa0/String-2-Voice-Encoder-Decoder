@@ -16,11 +16,9 @@ df = 10
 order = 4
 nyq = fs * 0.5
 filter_frequency = 200
-plt.figure(1)
-plt.clf()
 decode_filters = [[butter(order,[(filter_frequency - df) / nyq,
-                           (filter_frequency + df) / nyq] if filter_frequency != nyq else(filter_frequency - df) / nyq,
-                          btype='band' if filter_frequency != nyq else 'hp') for filter_frequency in frequencies] for frequencies in encode_frequencies]
+                           (filter_frequency + df) / nyq] if filter_frequency + df < nyq else(filter_frequency - df) / nyq,
+                          btype='band' if filter_frequency + df < nyq else 'hp') for filter_frequency in frequencies] for frequencies in encode_frequencies]
 string = ''
 for wave in characters_waves:
     filtered_signals = [[lfilter(filter_frequency[0], filter_frequency[1], wave) for filter_frequency in frequencies]
