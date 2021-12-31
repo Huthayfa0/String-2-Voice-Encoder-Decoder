@@ -1,4 +1,4 @@
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 from scipy.io.wavfile import read
 import numpy as np
 from scipy.signal import find_peaks
@@ -9,18 +9,15 @@ from scipy.fft import fft, fftfreq
 encode("Hello World")
 print("\n")
 fs, data = read("output.wav")
-exit(0)
+print(type(data))
 duration = 0.040
 samples_count = int(fs * duration)
-characters_waves = [data[i:i+samples_count] for i in range(0,len(data),samples_count)]
+characters_waves = [data[i:i+samples_count]for i in range(0,len(data),samples_count)]
 for wave in characters_waves:
     frequency = []
-    y=fft(wave,128)
-    y=abs(y[1:64])
-    peaks = find_peaks(y)
-    arraysort=np.sort(peaks[0])[::-1]
-    print(peaks)
-    for i in arraysort[0:4]:
-        frequency.append((i*(4000/64)))
+    y=fft(wave)
+    y=abs(y[0:len(y)//2+10])
+    peaks,_ = find_peaks(y,height=1)
+    for i in peaks:
+        frequency.append(i*25)
     print(frequency)
-    break
