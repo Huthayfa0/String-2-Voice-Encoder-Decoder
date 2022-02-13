@@ -1,67 +1,80 @@
 import numpy as np
 from scipy.io.wavfile import read
 from scipy.signal import find_peaks
-
 from part1 import encode
+from part2 import decoder
 from scipy.fft import fft, fftfreq
 
-encode("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")
-print("\n")
-fs, data = read("output.wav")
-print(type(data))
-duration = 0.040
-samples_count = int(fs * duration)
-characters_waves = [data[i:i+samples_count]for i in range(0,len(data),samples_count)]
-characters = { "A":[200, 400, 800, 1600],
-               "B":[200, 400, 800, 2400],
-               "C": [200, 400, 800, 4000],
-               "D": [200 ,400 ,1200 ,1600],
-               "E":[200, 400, 1200 ,2400],
-               "F":[200, 400, 1200, 4000],
-               "G": [200, 400, 1600, 2000],
-               "H": [200, 400, 2000, 2400],
-                "I" :[200, 400, 2000, 4000],
-                "J" :[200, 600 ,800, 1600],
-                "K" :[200, 600 ,800, 2400],
-                "L" :[200, 600 ,800 ,4000],
-                "M":[200, 600, 1200, 1600],
-               "N" :[200 ,600, 1200 ,2400],
-                "O" :[200 ,600 ,1200 ,4000],
-                "P" :[200 ,600 ,1600,2000],
-                "Q" :[200 ,600 ,2000, 2400],
-                "R" :[200 ,600 ,2000 ,4000],
-                "S" :[200 , 800,1000, 1600],
-                "T" :[200, 800,1000, 2400],
-                "U" :[200 , 800,1000, 4000],
-                "V" :[200 ,1000 ,1200 ,1600],
-                "W" :[200, 1000 ,1200, 2400],
-                "X" :[200 ,1000, 1200, 4000],
-                "Y" :[200 ,1000 , 1600,2000],
-                "Z":[200 ,1000,2000 ,2400]}
-string = ""
-for wave in characters_waves:
-    keys=[]
-    frequency = []
-    frequencychar = []
-    y=fft(wave)
-    y=abs(y[0:len(y)//2+10])
-    peaks,_ = find_peaks(y,height=1)
-    for i in peaks:
-        frequency.append(i*25)
-    flag=0
-    if frequency[0]==100:
-        flag=1
-        frequency[0] = 200
-    keys = [k for k, v in characters.items() if v == frequency]
-    if flag:
-        if keys==[] :
-            string+=" "
-        else:
-            string+=keys[0].lower()
-    else:
-        if keys==[] :
-            string+=" "
-        else:
-            string+=keys[0]
+print("If you need encode the string enter 1\n"
+      "If you need Decoder the .wav using Fourier transform enter 2\n"
+      "If you need Decoder the .wav using  Filters enter 3\n"
+      "if you need exit enter 0\n")
+x=input()
+while x!=0:
+    if(x=='1'):
+        print("Please enter the String:")
+        str=input()
+        encode(str)
+    elif(x=='2'):
+        print("Please enter the name of file or the path of file:")
+        str=input()
+        fs, data = read(str)
+        output = ""
+        length = len(data)
+        characters = [["a",100,400, 800, 1600],
+                      ["b",100, 400, 800, 2400],
+                      ["c",100, 400, 800, 4000],
+                      ["d",100, 400, 1200, 1600],
+                      ["e",100, 400, 1200, 2400],
+                      ["f",100, 400, 1200, 4000],
+                      ["g",100, 400, 1600, 2000],
+                      ["h",100, 400, 2000, 2400],
+                      ["i",100, 400, 2000, 4000],
+                      ['j',100, 600, 800, 1600],
+                      ['k',100, 600, 800, 2400],
+                      ["l",100, 600, 800, 4000],
+                      ["m",100, 600, 1200, 1600],
+                      ["n",100, 600, 1200, 2400],
+                      ["o",100, 600, 1200, 4000],
+                      ["p",100, 600, 1600, 2000],
+                      ["q",100, 600, 2000, 2400],
+                      ["r",100, 600, 2000, 4000],
+                      ["s",100, 800, 1000, 1600],
+                      ["t",100, 800, 1000, 2400],
+                      ["u",100, 800, 1000, 4000],
+                      ["v",100, 1000, 1200, 1600],
+                      ["w",100, 1000, 1200, 2400],
+                      ["x", 100,1000, 1200, 4000],
+                      ["y",100, 1000, 1600, 2000],
+                      ["z",100, 1000, 2000, 2400],
+                      [ " ",100,1000,2000,4000]]
 
-print(string)
+        s= int(length / 320)
+
+        for i in range(s):
+            segment = data[i * 320:i * 320 + 320]
+            ft = abs(np.fft.fft(segment))
+            peaks, _ = find_peaks(ft, height=1.3e6)
+            frequnices = (peaks * 25)
+            for k in range(len(characters)):
+                char = characters[k][2:5]
+                if (char[0] in frequnices and char[1] in frequnices and char[2] in frequnices):
+                    if (100 in frequnices):
+                        output = output + characters[k][0]
+                    elif (200 in frequnices):
+                        ch1 = characters[k][0].upper()
+                        output = output + ch1
+                    else:
+                        ch1 = ' '
+                        output = output + ch1
+                    break
+        print("The string in "+str+" is: " + output)
+    elif(x=='3'):
+        print("Please enter the name of file or the path of file:")
+        str=input()
+        decoder(str)
+    print("\nIf you need encode the string enter 1\n"
+          "If you need Decoder the .wav using Fourier transform enter 2\n"
+          "If you need Decoder the .wav using  Filters enter 3\n"
+          "if you need exit enter 0\n")
+    x=input()

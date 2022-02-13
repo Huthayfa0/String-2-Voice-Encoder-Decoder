@@ -1,3 +1,4 @@
+import pyaudio
 from scipy.io.wavfile import write
 import numpy as np
 def encode(string, output_file="output.wav", fs=8000, duration=0.040, encode_frequencies=None):
