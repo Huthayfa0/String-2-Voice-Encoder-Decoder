@@ -52,7 +52,6 @@ while x!=0:
         hi=max(data)*50
         if hi<1000:
             hi=1
-        print(hi)
         samples_count = int(fs * duration)
         characters_waves = [data[i:i + samples_count] for i in range(0, len(data), samples_count)]
         for segment in characters_waves:
