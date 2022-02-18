@@ -1,4 +1,5 @@
 import pyaudio
+from playsound import playsound
 from scipy.io.wavfile import write
 import numpy as np
 def encode(string, output_file="output.wav", fs=8000, duration=0.040, encode_frequencies=None):
@@ -23,3 +24,4 @@ def encode(string, output_file="output.wav", fs=8000, duration=0.040, encode_fre
             wave += waves[1][x % 3]
         samples = np.concatenate((samples, wave), axis=0)
     write(output_file, fs, samples)
+    playsound(output_file)
