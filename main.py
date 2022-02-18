@@ -4,7 +4,7 @@ from scipy.signal import find_peaks
 from part1 import encode
 from part2 import decoder
 from scipy.fft import fft, fftfreq
-
+import os
 print("If you need encode the string enter 1\n"
       "If you need Decoder the .wav using Fourier transform enter 2\n"
       "If you need Decoder the .wav using  Filters enter 3\n"
@@ -19,6 +19,7 @@ while x!=0:
         print("Please enter the name of file or the path of file:")
         str=input()
         fs, data = read(str)
+        duration = 0.040
         output = ""
         length = len(data)
         characters = [["a",100,400, 800, 1600],
@@ -48,13 +49,15 @@ while x!=0:
                       ["y",100, 1000, 1600, 2000],
                       ["z",100, 1000, 2000, 2400],
                       [ " ",100,1000,2000,4000]]
-
-        s= int(length / 320)
-
-        for i in range(s):
-            segment = data[i * 320:i * 320 + 320]
+        hi=max(data)*50
+        if hi<1000:
+            hi=1
+        print(hi)
+        samples_count = int(fs * duration)
+        characters_waves = [data[i:i + samples_count] for i in range(0, len(data), samples_count)]
+        for segment in characters_waves:
             ft = abs(np.fft.fft(segment))
-            peaks, _ = find_peaks(ft, height=1.3e6)
+            peaks, _ = find_peaks(ft, height=hi)
             frequnices = (peaks * 25)
             for k in range(len(characters)):
                 char = characters[k][2:5]
